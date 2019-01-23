@@ -6,11 +6,18 @@ from numpy import dot
 from numpy import logical_or
 from numpy import where
 from numpy import r_
+from numpy import random
 from numpy.linalg import norm
 from time import time
 from sys import stdout
 
-def nmf(V,Winit,Hinit,tol,timelimit,maxiter):
+
+def initialize(V, Matrix_RANK, Matrix_ORDER):
+    Winit = random.randint(0,9,size=(Matrix_RANK, Matrix_ORDER))
+    Hinit = random.randint(0,9,size=(Matrix_ORDER, Matrix_RANK))
+    return Winit, Hinit
+    
+def basicnmf(V,Matrix_RANK, Matrix_ORDER, tol,timelimit,maxiter):
     """
     (W,H) = nmf(V,Winit,Hinit,tol,timelimit,maxiter)
     W,H: output solution
@@ -18,18 +25,17 @@ def nmf(V,Winit,Hinit,tol,timelimit,maxiter):
     tol: tolerance for a relative stopping condition
     timelimit, maxiter: limit of time and iterations
     """
+    (Winit, Hinit) = initialize(V,Matrix_RANK, Matrix_ORDER)
     W = Winit; H = Hinit; initt = time();
 
     gradW = dot(W, dot(H, H.T)) - dot(V, H.T)
     gradH = dot(dot(W.T, W), H) - dot(W.T, V)
-    #initgrad = norm(r_[gradW, gradH.T])
     initgrad = norm(r_[gradW, gradH.T])
     print ('Init gradient norm %f' % initgrad )
     tolW = max(0.001,tol)*initgrad
     tolH = tolW
     for iter in range(1,maxiter):
         #stopping condition
-        #projnorm = norm(r_[gradW[logical_or(gradW<0, W>0)],gradH[logical_or(gradH<0, H>0)]])
         projnorm = norm(r_[gradW[logical_or(gradW<0, W>0)],gradH[logical_or(gradH<0, H>0)]])
         if projnorm < tol*initgrad or time() - initt > timelimit: break
   
