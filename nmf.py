@@ -12,21 +12,29 @@ from time import time
 from sys import stdout
 
 
-def initialize(V, Matrix_RANK, Matrix_ORDER):
-    Winit = random.randint(0,9,size=(Matrix_RANK, Matrix_ORDER))
-    Hinit = random.randint(0,9,size=(Matrix_ORDER, Matrix_RANK))
+def initialize(V, Matrix_RANK):
+    """
+    (Winit, Hinit) = initialize(V, Matrix_RANK)
+    Winit, Hinit: initial solution
+    """
+    shape = V.shape
+    print (shape)
+    Winit = random.randint(0,9,size=(Matrix_RANK, shape[0]))
+    Hinit = random.randint(0,9,size=(shape[1], Matrix_RANK))
     return Winit, Hinit
     
-def basicnmf(V,Matrix_RANK, Matrix_ORDER, tol,timelimit,maxiter):
+def basicnmf(V, Matrix_RANK, tol,timelimit,maxiter):
     """
     (W,H) = nmf(V,Winit,Hinit,tol,timelimit,maxiter)
     W,H: output solution
-    Winit,Hinit: initial solution
     tol: tolerance for a relative stopping condition
     timelimit, maxiter: limit of time and iterations
     """
-    (Winit, Hinit) = initialize(V,Matrix_RANK, Matrix_ORDER)
-    W = Winit; H = Hinit; initt = time();
+    (Winit, Hinit) = initialize(V, Matrix_RANK)
+    
+    W = Winit; 
+    H = Hinit; 
+    initt = time();
 
     gradW = dot(W, dot(H, H.T)) - dot(V, H.T)
     gradH = dot(dot(W.T, W), H) - dot(W.T, V)
@@ -43,12 +51,16 @@ def basicnmf(V,Matrix_RANK, Matrix_ORDER, tol,timelimit,maxiter):
     W = W.T
     gradW = gradW.T
   
-    if iterW==1: tolW = 0.1 * tolW
+    if iterW==1: 
+        tolW = 0.1 * tolW
 
     (H,gradH,iterH) = nlssubprob(V,W,H,tolH,1000)
-    if iterH==1: tolH = 0.1 * tolH
     
-    if iter % 10 == 0: stdout.write('.')
+    if iterH==1: 
+        tolH = 0.1 * tolH
+    
+    if iter % 10 == 0:
+        stdout.write('.')
     print ('\nIter = %d Final proj-grad norm %f' % (iter, projnorm))
     return (W,H)
 
@@ -67,6 +79,7 @@ def nlssubprob(V,W,Hinit,tol,maxiter):
     WtW = dot(W.T, W) 
 
     alpha = 1; beta = 0.1;
+    
     for iter in range(1, maxiter):  
         grad = dot(WtW, H) - WtV
         projgrad = norm(grad[logical_or(grad < 0, H >0)])
