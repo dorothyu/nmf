@@ -3,27 +3,25 @@ import numpy as np
 
 
 def consensus(a, Matrix_RANK, Matrix_ORDER,nloop):
-    """ calculate consensus matrix
+    """ 
+    Calculate consensus matrix
     """
     (n,m)     = a.shape
     consensus = np.zeros((m,m))
     conn      = np.zeros((m,m))
-
-    #i = 0
     connac = np.zeros((m,m))
 
     for l in range(nloop):
-            #i += 1
-        (w,h) = nmf.basicnmf(a, Matrix_RANK, Matrix_ORDER, 0.001, 50, 100)
+        (w,h) = nmf.basicnmf(a, Matrix_RANK, 0.001, 50, 100)
         conn   = nmfconnectivity(h)
-            
         connac = connac + conn
 
     consensus = connac / float(nloop)
     return consensus
 
 def nmfconnectivity(h):
-    """ calculate connective matrix
+    """ 
+    Calculate connective matrix
     """
     (k,m) = h.shape
 
