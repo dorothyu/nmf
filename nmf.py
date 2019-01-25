@@ -2,7 +2,6 @@
 # Author: Chih-Jen Lin, National Taiwan University
 # Python/numpy translation: Anthony Di Franco
 
-import numpy as np
 from numpy import logical_or
 from numpy import where
 from numpy import r_
@@ -23,8 +22,6 @@ def initialize(V,rank):
     m = shape[1]
     """
     shape = V.shape 
-    #Winit = random.randn(shape[0], rank)# W has the size of (n x r)
-    #Hinit = random.randn(rank, shape[1]) # H has the size of (r x m)
     Winit = abs(random.uniform(0,1,size = (shape[0],rank)))
     Hinit = abs(random.uniform(0,1,size = (rank,shape[1])))
     return Winit, Hinit
