@@ -1,6 +1,8 @@
 import nmf
 import numpy as np
-
+import pandas as pd
+from scipy.cluster.hierarchy import linkage, leaves_list,dendrogram
+from scipy.spatial.distance import squareform
 
 def consensus(V, rank, nloop):
     """ 
@@ -40,3 +42,13 @@ def connectivity(H):
     mat2 = np.tile(np.matrix(l).T,(1,shape[1]))
 
     return np.array(mat1 == mat2, dtype=int)
+
+
+def reorderConsensusMatrix(M):
+    M = pd.DataFrame(M)
+    Y = 1 - M
+    Z = linkage(squareform(Y), method='average')
+    ivl = leaves_list(Z)
+    ivl = ivl[::-1]
+    reorderM = pd.DataFrame(M.values[:, ivl][ivl, :], index=M.columns[ivl], columns=M.columns[ivl])
+    return reorderM  
