@@ -24,8 +24,10 @@ def initialize(V,rank):
     shape = V.shape 
     Winit = abs(random.uniform(0,1,size = (shape[0],rank)))
     Hinit = abs(random.uniform(0,1,size = (rank,shape[1])))
-    return Winit, Hinit
     
+    return Winit, Hinit
+
+
 def basicnmf(V, rank, tol, timelimit, maxiter):
     """
     (W,H) = nmf(V,Winit,Hinit,tol,timelimit,maxiter)
@@ -55,7 +57,6 @@ def basicnmf(V, rank, tol, timelimit, maxiter):
             break
   
         (W, gradW, iterW) = nlssubprob(V.T,H.T,W.T,tolW,1000)
-        #(W, gradW, iterW) = nlssubprob(V,W,H,tolW,1000)
         W = W.T
         gradW = gradW.T
         if iterW==1: 
@@ -69,7 +70,9 @@ def basicnmf(V, rank, tol, timelimit, maxiter):
         if iter % 10 == 0:
             stdout.write('.')
     print ('\nIter = %d Final proj-grad norm %f' % (iter, projnorm))
+    
     return (W,H)
+
 
 def nlssubprob(V, W, Hinit, tol, maxiter):
     """
