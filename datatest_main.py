@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-from numpy import dot
-from numpy import random
 from nmf import basicnmf
+from scipy.cluster.hierarchy import linkage, leaves_list,dendrogram
+from scipy.spatial.distance import squareform
 import pandas as pd
 import numpy as np
 import seaborn as sns
@@ -11,35 +11,40 @@ from conses import consensus
 
 def main():
 
-    # Define constants
-    Matrix_ORDER = 5
-    Matrix_RANK = 5
+    
+    V = pd.read_csv('input_small_data_DRUG.zero-one.csv',header = 0, index_col = 0)
+    V = V.values
+    V_col = list(pd.read_csv('input_small_data_DRUG.zero-one.csv',nrows= 0))[1:]
+    rank = 3
 
-    # Generate a target Matrix
-    origin_W = random.randint(0,9,size=(Matrix_RANK, Matrix_ORDER))
-    origin_H = random.randint(0,9,size=(Matrix_ORDER, Matrix_RANK))
-    v = dot(origin_W, origin_H) 
     
     # Calculate W&H by multiple iteration
-    # def nmf(V,Winit,Hinit,tol,timelimit,maxiter)
-    (output_W, output_H) = basicnmf(v, Matrix_RANK, Matrix_ORDER, 0.001, 50, 100)
-    cons = consensus(v, Matrix_RANK, Matrix_ORDER,5)
-    print("Consensus:\n",cons)
-    sns.heatmap(cons)
+    (output_W, output_H) = basicnmf(V, rank, 0.001, 50, 1000)
     
-    # Show Results
-    print ("\n==Original_Matrix==")
-    print ("Matrix_W :\n", origin_W) 
-    print ("Matrix_H :\n", origin_H)
-    print ("Target_V :\n", v)
-        
+    # Draw consensus heatmap
+    cons = consensus(V, rank, 10)
+    M = pd.DataFrame(cons,columns = V_col,index = V_col)
+    M1 = reorderConsensusMatrix(M)
+    print("Consensus:\n",cons)
+    sns.heatmap(M1)
+
+    
     print ("\n===Output_Matrix===")
     print ("Matrix_W :\n", output_W)
     print ("Matrix_H :\n", output_H)
-    print ("Output_V :\n", dot(output_W, output_H))
+    print ("Output_V :\n", np.matmul(output_W, output_H))
     
     
-    
-    
+def reorderConsensusMatrix(M: np.array):
+    M = pd.DataFrame(M)
+    Y = 1 - M
+    Z = linkage(squareform(Y), method='average')
+    ivl = leaves_list(Z)
+    ivl = ivl[::-1]
+    reorderM = pd.DataFrame(M.values[:, ivl][ivl, :], index=M.columns[ivl], columns=M.columns[ivl])
+    return reorderM    
+
+
+
 if __name__ == '__main__':
     main()
