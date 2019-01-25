@@ -9,3 +9,4 @@ Ideas:
 - Add an initialization method to generate the matrices randomly. (checked)
 - Edit the nlssubprob function, which only supports square matrix in the original codes. (in progress)
 - Error is a bit crazy…………
+- Heatmap cannot correctly show the cluster result (due to the error in nlssubprob function)
