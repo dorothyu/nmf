@@ -1,21 +1,24 @@
 import nmf
 import numpy as np
 import pandas as pd
-from scipy.cluster.hierarchy import linkage, leaves_list,dendrogram
-from scipy.spatial.distance import squareform
+from scipy.cluster.hierarchy import linkage, leaves_list, dendrogram,cophenet
+from scipy.spatial.distance import squareform,pdist
 
 def consensus(V, rank, nloop):
     """ 
     Calculate consensus matrix for columns of V
     Matrix V has the size of n rows and m columns
+    n = shape[0]
+    m = shape[1]
     """
     shape = V.shape
-    consensus = np.zeros((shape[1],shape[1]))
-    conn = np.zeros((shape[1],shape[1]))
-    connac = np.zeros((shape[1],shape[1]))
+    m = shape[1]
+    consensus = np.zeros((m,m))
+    conn = np.zeros((m,m))
+    connac = np.zeros((m,m))
 
     for l in range(nloop):
-        (W,H) = nmf.basicnmf(V, rank, 0.001, 50, 100)
+        (W,H) = nmf.basicnmf(V, rank, 0.001, 50, 1000)
         conn   = connectivity(H)
         connac = connac + conn
 
@@ -45,6 +48,9 @@ def connectivity(H):
 
 
 def reorderConsensusMatrix(M):
+    """
+    Reorder the consensus matrix to show the clustering result properly
+    """
     M = pd.DataFrame(M)
     Y = 1 - M
     Z = linkage(squareform(Y), method='average')
@@ -52,3 +58,12 @@ def reorderConsensusMatrix(M):
     ivl = ivl[::-1]
     reorderM = pd.DataFrame(M.values[:, ivl][ivl, :], index=M.columns[ivl], columns=M.columns[ivl])
     return reorderM  
+
+def cophenetic(M):
+    """
+    Calculate the cophenetic correlation coefficient to assess the quality of clutering
+    """
+    Z = linkage(M, method='average')
+    c, cophe_dist = cophenet(Z,pdist(M))
+    return c
+    
