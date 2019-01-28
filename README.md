@@ -7,3 +7,4 @@ Progress will be recorded here.
 
 Ideas:
 - Draw consensus heatmap to visualize the clustering result
+- Compare the quality of clutering (cophenetic correlation coefficient) between each rank
