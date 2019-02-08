@@ -1,4 +1,5 @@
-# nmf
+# sspnmf
+
 Core codes are based on nmf.py from Chih-Jen Lin, National Taiwan University, Python translated by Anthony Di Franco
 
 Currently, codes are under editing for implementing customized functions.
