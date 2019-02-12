@@ -4,6 +4,7 @@ import pandas as pd
 from scipy.cluster.hierarchy import linkage, leaves_list, dendrogram,cophenet
 from scipy.spatial.distance import squareform,pdist
 
+
 def consensus(V, rank, nloop):
     """ 
     Calculate consensus matrix for columns of V
@@ -18,12 +19,13 @@ def consensus(V, rank, nloop):
     connac = np.zeros((m,m))
 
     for l in range(nloop):
-        (W,H) = nmf.basicnmf(V, rank, 0.001, 50, 1000)
+        (W,H) = nmf.projnmf(V, rank, 0.001, 50, 1000)
         conn   = connectivity(H)
         connac = connac + conn
 
     consensus = connac / float(nloop)
     return consensus
+
 
 def connectivity(H):
     """ 
@@ -59,6 +61,7 @@ def reorderConsensusMatrix(M):
     reorderM = pd.DataFrame(M.values[:, ivl][ivl, :], index=M.columns[ivl], columns=M.columns[ivl])
     return reorderM  
 
+
 def cophenetic(M):
     """
     Calculate the cophenetic correlation coefficient to assess the quality of clutering
@@ -66,4 +69,3 @@ def cophenetic(M):
     Z = linkage(M, method='average')
     c, cophe_dist = cophenet(Z,pdist(M))
     return c
-    
