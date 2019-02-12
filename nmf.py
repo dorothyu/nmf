@@ -1,6 +1,6 @@
 # NMF by alternative non-negative least squares using projected gradients
-# Original author: Chih-Jen Lin, National Taiwan University
-# Customization is based on the Python/numpy code by Anthony Di Franco
+# Author: Chih-Jen Lin, National Taiwan University
+# Python/numpy translation: Anthony Di Franco
 
 from numpy import logical_or, where, r_, random, matmul
 from numpy.linalg import norm
@@ -24,7 +24,7 @@ def initialize(V,rank):
     return Winit, Hinit
 
 
-def basicnmf(V, rank, tol, timelimit, maxiter):
+def projnmf(V, rank, tol, timelimit, maxiter):
     """
     (W,H) = nmf(V,Winit,Hinit,tol,timelimit,maxiter)
     W,H: output solution
@@ -66,7 +66,6 @@ def basicnmf(V, rank, tol, timelimit, maxiter):
         if iter % 10 == 0:
             stdout.write('.')
     #print ('\nIter = %d Final proj-grad norm %f' % (iter, projnorm))
-    
     return (W,H)
 
 
@@ -119,4 +118,5 @@ def nlssubprob(V, W, Hinit, tol, maxiter):
                         
     if iter == maxiter:
         print ('Max iter in nlssubprob')
+        
     return (H, grad, iter)
