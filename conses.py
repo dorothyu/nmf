@@ -1,7 +1,4 @@
-import pnmf
-import nmf
-import spnmf
-import snmf
+import nmf,snmf,spnmf,pnmf
 import numpy as np
 import pandas as pd
 from scipy.cluster.hierarchy import linkage, leaves_list, cophenet
