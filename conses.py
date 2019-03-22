@@ -1,11 +1,14 @@
+import pnmf
 import nmf
+import spnmf
+import snmf
 import numpy as np
 import pandas as pd
-from scipy.cluster.hierarchy import linkage, leaves_list, dendrogram,cophenet
+from scipy.cluster.hierarchy import linkage, leaves_list, cophenet
 from scipy.spatial.distance import squareform,pdist
 
 
-def consensus(V, rank, nloop):
+def consensus(V, rank, nloop, method):
     """ 
     Calculate consensus matrix for columns of V
     Matrix V has the size of n rows and m columns
@@ -19,7 +22,14 @@ def consensus(V, rank, nloop):
     connac = np.zeros((m,m))
 
     for l in range(nloop):
-        (W,H) = nmf.projnmf(V, rank, 0.001, 50, 1000)
+        if method =="pnmf":
+            (W,H) = pnmf.projnmf(V, rank, 0.001, 50, 100)
+        elif method =="nmf":
+            (W,H) = nmf.nmf(V, rank, 0.001, 50, 100)
+        elif method == "spnmf":
+            (W,H) = spnmf.spnmf(V, rank, 0.001, 50, 100)
+        elif method == "snmf":
+            (W,H) = snmf.snmf(V, rank, 0.001, 50, 100)
         conn   = connectivity(H)
         connac = connac + conn
 
@@ -33,6 +43,7 @@ def connectivity(H):
     """
     shape = H.shape
 
+    
     l = []
     for i in range(shape[1]):
         max_i = 0
@@ -69,3 +80,4 @@ def cophenetic(M):
     Z = linkage(M, method='average')
     c, cophe_dist = cophenet(Z,pdist(M))
     return c
+    
