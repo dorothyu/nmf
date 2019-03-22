@@ -1,4 +1,4 @@
-# NMF by alternative non-negative least squares using projected gradients
+# PNMF by alternative non-negative least squares using projected gradients
 # Author: Chih-Jen Lin, National Taiwan University
 # Python/numpy translation: Anthony Di Franco
 
@@ -33,9 +33,9 @@ def projnmf(V, rank, tol, timelimit, maxiter):
     """
     (Winit, Hinit) = initialize(V, rank)
     
-    W = Winit; 
-    H = Hinit; 
-    initt = time();
+    W = Winit
+    H = Hinit
+    initt = time()
 
     gradW = matmul(W, matmul(H, H.T)) - matmul(V, H.T)
     gradH = matmul(matmul(W.T, W), H) - matmul(W.T, V)
