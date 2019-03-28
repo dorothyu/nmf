@@ -1,6 +1,6 @@
 from sys import stdout
 from time import time
-from numpy import random,where,matmul
+from numpy import random,where,matmul,abs,linalg
 
 def initialize(V,rank):
     """
@@ -12,8 +12,9 @@ def initialize(V,rank):
     m = shape[1]
     """
     shape = V.shape 
-    Winit = random.random(size = (shape[0],rank))
-    Hinit = random.random(size = (rank,shape[1]))
+    Winit = abs(random.uniform(low = 0, high = 1,size = (shape[0],rank)))
+    #Hinit = random.random(size = (rank,shape[1]))
+    Hinit = abs(random.uniform(low = 0, high = 1,size = (rank,shape[1])))
     
     return Winit, Hinit
 
@@ -31,14 +32,11 @@ def nmf(V, rank, tol, timelimit, maxiter):
     initt = time();
     #shape = V.shape
     eps = 1e-16
+    
     for iter in range (1,maxiter):
         pred_V = matmul(W,H)
         error = V-pred_V
-        err = 0.0 
-        
-        for i in range(V.shape[0]):
-            for j in range(V.shape[1]):
-                err += error[i,j] * error[i,j]/2
+        err = linalg.norm(error)
         if err < tol:
             break
 
@@ -49,7 +47,7 @@ def nmf(V, rank, tol, timelimit, maxiter):
         WtV = matmul(W.T,V)
         WtW = matmul(W.T,W)
         WtWH = matmul(WtW,H)
-        H = H * WtV/WtWH\
+        H = H * WtV/WtWH
         # Update W
         VHt = matmul(V,H.T)
         HHt = matmul(H,H.T)
@@ -62,5 +60,7 @@ def nmf(V, rank, tol, timelimit, maxiter):
         if iter % 10 == 0:
             stdout.write('.')
     
+    print(err)
     return(W,H)
-          
+        
+   
