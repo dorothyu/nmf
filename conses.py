@@ -39,7 +39,6 @@ def connectivity(H):
     Calculate connectivity matrix
     """
     shape = H.shape
-
     
     l = []
     for i in range(shape[1]):
